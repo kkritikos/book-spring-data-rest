@@ -27,8 +27,9 @@ services:
         window: 40s
     environment:
       MYSQL_NAME: mysql
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PWD: ${MYSQL_PWD}
+    secrets:
+       - spring.datasource.username
+       - spring.datasource.password
     networks:
       - library-net
     depends_on: 
@@ -39,7 +40,7 @@ services:
     ports:
       - "3306"
     healthcheck:
-      test: ["CMD", "mysql" ,"--user=${MYSQL_USER}", "--password=${MYSQL_PWD}"]
+      test: ["CMD", "sh" , "-c", "mysql --user=$(<\"/run/secrets/spring.datasource.username\") --password=$(<\"/run/secrets/spring.datasource.password\")"]
       timeout: 20s
       retries: 10
     deploy:
@@ -57,9 +58,12 @@ services:
           memory: 2048M
     environment:
       MYSQL_RANDOM_ROOT_PASSWORD: yes
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PWD}
+      MYSQL_USER_FILE: /run/secrets/spring.datasource.username
+      MYSQL_PASSWORD_FILE: /run/secrets/spring.datasource.password
       MYSQL_DATABASE: books
+    secrets:
+       - spring.datasource.username
+       - spring.datasource.password
     volumes:
       - mysql:/var/lib/mysql
     networks:
@@ -68,3 +72,8 @@ networks:
   library-net: {}
 volumes:
   mysql: {}
+secrets:
+   spring.datasource.username:
+     file: ./db_user.txt
+   spring.datasource.password:
+     file: ./db_pwd.txt
