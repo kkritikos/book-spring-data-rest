@@ -32,19 +32,8 @@ services:
       test: ["CMD", "sh" , "-c", "mysql --user=$(<\"/run/secrets/spring.datasource.username\") --password=$(<\"/run/secrets/spring.datasource.password\")"]
       timeout: 20s
       retries: 10
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 10s
-        max_attempts: 3
-        window: 40s
-      resources:
-        limits:
-          cpus: '2.0'
-          memory: 4096M
-        reservations:
-          cpus: '1.0'
-          memory: 2048M
+    mem_limit: 4096m
+    cpus: 2
     environment:
       MYSQL_RANDOM_ROOT_PASSWORD: yes
       MYSQL_USER_FILE: /run/secrets/spring.datasource.username
