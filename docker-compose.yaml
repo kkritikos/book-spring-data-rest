@@ -12,19 +12,8 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
-    deploy:
-      resources:
-        limits:
-          cpus: '2.0'
-          memory: 1024M
-        reservations:
-          cpus: '0.50'
-          memory: 512M
-      restart_policy:
-        condition: on-failure
-        delay: 10s
-        max_attempts: 3
-        window: 40s
+    mem_limit: 1024m
+    cpus: 2
     environment:
       MYSQL_NAME: mysql
     secrets:
